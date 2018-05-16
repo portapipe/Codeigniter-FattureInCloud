@@ -20,11 +20,20 @@ $this->fattureincloud->info();
 $this->fattureincloud->info_account(
   array(
     "lista_iva",
-    "lista_pagamenti"
+    "lista_conti",
+    "lista_metodi_pagamenti",
+    "lista_valute",
+    "lista_paesi",
+    "lista_template",
+    "lista_template_ddt",
+    "lista_template_ddt_ftacc",
+    "tipo_licenza",
+    "durata_licenza",
+    "nome"
   )
 );
 ```
-Puoi scegliere anche solo una delle liste.
+Puoi scegliere anche solo una delle opzioni.
 
 ## Ottieni la lista dei prodotti
 ```php
