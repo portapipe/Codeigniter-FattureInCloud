@@ -81,6 +81,8 @@ $this->fattureincloud->crea_fattura(
     "nome"=>"Pluto Doofie",
     "indirizzo_via"=>"Via di Casa Mia 13",
     "indirizzo_citta"=>"Milano",
+    "indirizzo_cap"=>"10100",
+    "indirizzo_provincia"=>"MI",
     "piva"=>123456789123,
     "cf"=>"ABCDEF01G23H456I",
     "salva_anagrafica"=>false,
