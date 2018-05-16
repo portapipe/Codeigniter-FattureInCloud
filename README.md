@@ -15,6 +15,17 @@ $this->load->library("FattureInCloud",array("api_uid"=>"12345","api_key"=>"1a2b3
 $this->fattureincloud->info();
 ```
 
+## Ottenere le info/liste configurate nell'account
+```php
+$this->fattureincloud->info_account(
+  array(
+    "lista_iva",
+    "lista_pagamenti"
+  )
+);
+```
+Puoi scegliere anche solo una delle liste.
+
 ## Ottieni la lista dei prodotti
 ```php
 $this->fattureincloud->lista_prodotti();
@@ -80,3 +91,11 @@ Il primo parametro contiene l'anagrafica del cliente a cui la fattura andrà.
 Il secondo parametro sono i campi extra dell'anagrafica (mail, tel, fax...).
 
 
+
+## Creare una ricevuta, una nota d'ordine, una fattura proforma...
+Anche qui ci sono tre punti e sono uguali alle fatture, con la differenza che invece di chiamare `crea_fattura(...` si userà:
+```php
+$this->fattureincloud->crea_ricevuta(...
+$this->fattureincloud->crea_nota_di_credito(...
+$this->fattureincloud->crea_proforma(...
+```
