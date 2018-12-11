@@ -25,6 +25,8 @@ class FattureInCloud
     private $articoli = array();
     private $pagamenti = array();
 
+    public $campi_aggiuntivi = array();
+
     public $data; //Data attuale in gg/mm/aaaa
 
     function __construct($config = array()){
@@ -41,17 +43,31 @@ class FattureInCloud
 
     public function info(){
         $this->url = "https://api.fattureincloud.it/v1/richiesta/info";
-        $this->crea();
+        return $this->crea();
+    }
+
+    public function info_account($campi=array()){
+        $this->url = "https://api.fattureincloud.it/v1/info/account";
+        return $this->crea(array("campi"=>$campi));
     }
 
     public function lista_clienti(){
         $this->url = "https://api.fattureincloud.it/v1/clienti/lista";
-        $this->crea();
+        return $this->crea();
+    }
+
+    public function lista_fornitori(){
+        $this->url = "https://api.fattureincloud.it/v1/fornitori/lista";
+        return $this->crea();
     }
 
     public function lista_prodotti(){
         $this->url = "https://api.fattureincloud.it/v1/prodotti/lista";
-        $this->crea();
+        return $this->crea();
+    }
+
+    public function lista_iva(){
+        return $this->info_account(array("lista_iva"));
     }
 
     public function aggiungi_articolo($dati){
@@ -81,13 +97,14 @@ class FattureInCloud
         return $articolo;
     }
 
-    public function aggiungi_pagamento($dati,$pagato=false){
+    public function aggiungi_pagamento($dati=array(),$pagato=false){
+        if($pagato===true) $pagato = "Pagato";
         $pagamento =
             array(
-              "data_scadenza" => "16/05/2018",
-              "importo" => 0,
+              "data_scadenza" => $this->data,
+              "importo" => "auto",
               "metodo" => (!$pagato?"not":$pagato),
-              "data_saldo" => "16/05/2018"
+              "data_saldo" => $this->data
             );
         foreach($dati as $k=>$v){
             $pagamento[$k]=$v;
@@ -99,19 +116,19 @@ class FattureInCloud
 
     public function crea_fattura($anagrafica,$extra_anagrafica=array()){
         $this->url = "https://api.fattureincloud.it/v1/fatture/nuovo";
-        $this->crea_documento($anagrafica,$extra_anagrafica);
+        return $this->crea_documento($anagrafica,$extra_anagrafica);
     }
     public function crea_ricevuta($anagrafica,$extra_anagrafica=array()){
         $this->url = "https://api.fattureincloud.it/v1/ricevute/nuovo";
-        $this->crea_documento($anagrafica,$extra_anagrafica);
+        return $this->crea_documento($anagrafica,$extra_anagrafica);
     }
     public function crea_nota_di_credito($anagrafica,$extra_anagrafica=array()){
         $this->url = "https://api.fattureincloud.it/v1/ndc/nuovo";
-        $this->crea_documento($anagrafica,$extra_anagrafica);
+        return $this->crea_documento($anagrafica,$extra_anagrafica);
     }
     public function crea_proforma($anagrafica,$extra_anagrafica=array()){
         $this->url = "https://api.fattureincloud.it/v1/proforma/nuovo";
-        $this->crea_documento($anagrafica,$extra_anagrafica);
+        return $this->crea_documento($anagrafica,$extra_anagrafica);
     }
 
     /*
@@ -126,17 +143,18 @@ class FattureInCloud
 
         $dati = array(
           "nome" => "Codeigniter FattureInCloud",
-          "indirizzo_via" => "Via Test TEST, 123",
-          "indirizzo_cap" => "21012",
-          "indirizzo_citta" => "Curno",
-          "indirizzo_provincia" => "BG",
-          "indirizzo_extra" => "",
+          //"indirizzo_via" => "Via Test TEST, 123",
+          //"indirizzo_cap" => "21012",
+          //"indirizzo_citta" => "Curno",
+          //"indirizzo_provincia" => "BG",
+          //"indirizzo_extra" => "",
           //"paese" => "Italia",
           //"paese_iso" => "IT",
           //"lingua" => "it",
-          "piva" => "IT1234567890",
-          "cf" => "ABCDEF12G34H567I",
-          "autocompila_anagrafica" => false,
+          //"piva" => "IT1234567890",
+          //"cf" => "ABCDEF12G34H567I",
+          //"numero" => "",
+          "autocompila_anagrafica" => true,
           "salva_anagrafica" => false,
           "data" => $this->data,
           "valuta" => "EUR",
@@ -145,10 +163,12 @@ class FattureInCloud
           "note" => "",
           //"nascondi_scadenza" => false,
           //"mostra_info_pagamento" => false,
-          "metodo_pagamento" => "Bonifico",
-          "metodo_titoloN" => "IBAN",
-          "metodo_descN" => "IT01A2345678900000000001234",
-          "mostra_totali" => "tutti",
+          //"metodo_pagamento" => "Bonifico",
+          //"metodo_titolo1" => "IBAN",
+          //"metodo_desc1" => "IT01A2345678900000000001234",
+          //"metodo_titolo2" => "Ragione Sociale",
+          //"metodo_desc2" => "Azienda.net",
+          //"mostra_totali" => "tutti",
           //"mostra_bottone_bonifico" => false,
           //"mostra_bottone_paypal" => false,
           //"mostra_bottone_notifica" => false,
@@ -198,7 +218,7 @@ class FattureInCloud
             $dati['extra_anagraica'] = $extra_anagrafica;
         }
 
-        $this->crea($dati);
+        return $this->crea($dati);
     }
 
 
@@ -207,6 +227,10 @@ class FattureInCloud
         $richiesta['api_uid'] = $this->api_uid;
         $richiesta['api_key'] = $this->api_key;
 
+        foreach($this->campi_aggiuntivi as $k=>$v){
+            $richiesta[$k] = $v;
+        }
+        //print_r($richiesta);die;
         $options = array(
             "http" => array(
                 "header"  => "Content-type: text/json\r\n",
