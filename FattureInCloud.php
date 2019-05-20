@@ -131,6 +131,24 @@ class FattureInCloud
         return $this->crea_documento($anagrafica,$extra_anagrafica);
     }
 
+	
+    public function elimina_fattura($token){
+        $this->url = "https://api.fattureincloud.it/v1/fatture/elimina";
+        return $this->crea(array("token"=>$token));
+    }
+    public function elimina_ricevuta($token){
+        $this->url = "https://api.fattureincloud.it/v1/ricevute/elimina";
+        return $this->crea(array("token"=>$token));
+    }
+    public function elimina_nota_di_credito($token){
+        $this->url = "https://api.fattureincloud.it/v1/ndc/elimina";
+        return $this->crea(array("token"=>$token));
+    }
+    public function elimina_proforma($token){
+        $this->url = "https://api.fattureincloud.it/v1/proforma/elimina";
+        return $this->crea(array("token"=>$token));
+    }
+
     /*
     RITORNA:
     {
