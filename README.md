@@ -110,3 +110,14 @@ $this->fattureincloud->crea_ricevuta(...
 $this->fattureincloud->crea_nota_di_credito(...
 $this->fattureincloud->crea_proforma(...
 ```
+
+
+## Eliminare una fattura, una ricevuta, una nota d'ordine, una fattura proforma...
+Semplice come cambiare una parola, e come argomento necessita il token:
+```php
+$this->fattureincloud->elimina_ricevuta("token")
+$this->fattureincloud->elimina_ricevuta("token")
+$this->fattureincloud->elimina_nota_di_credito("token")
+$this->fattureincloud->elimina_proforma("token")
+```
+
