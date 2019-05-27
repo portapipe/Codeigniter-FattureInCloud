@@ -70,6 +70,17 @@ class FattureInCloud
         return $this->info_account(array("lista_iva"));
     }
 
+
+    public function dettagli_fattura($token){
+        return $this->dettagli_documento($token,"fatture");
+    }
+
+    public function dettagli_documento($token,$tipo_documento = "fatture"){
+        $this->url = "https://api.fattureincloud.it/v1/$tipo_documento/dettagli";
+        $dati['token'] = $token;
+        return $this->crea($dati);
+    }
+
     public function aggiungi_articolo($dati){
         $articolo =
             array(
@@ -96,6 +107,10 @@ class FattureInCloud
         $this->articoli[] = $articolo;
         return $articolo;
     }
+
+    public function reset_articoli(){
+		$this->articoli = array();
+	}
 
     public function aggiungi_pagamento($dati=array(),$pagato=false){
         if($pagato===true) $pagato = "Pagato";
@@ -257,8 +272,22 @@ class FattureInCloud
             ),
         );
         $context  = stream_context_create($options);
-        $result = json_decode(file_get_contents($this->url, false, $context));
-        print_r($result);
+        $result_chiamata = @file_get_contents($this->url, false, $context);
+		
+		if($result_chiamata==false){
+			//TIMEOUT FATTUREINCLOUD
+			return false;
+		}
+        $result = json_decode($result_chiamata);
+        
+		//Debug
+		print_r($result);
+		
+		//Reset articoli, pagamenti e campi aggiuntivi al completamento
+		//Necessario per emissione sequenziale di fatture nella stessa sessione
+		$this->articoli = array();
+		$this->pagamenti = array();
+		$this->campi_aggiuntivi = array();
         return $result;
     }
 }
